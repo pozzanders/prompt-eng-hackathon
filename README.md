@@ -2,7 +2,8 @@
 
 ## Table of contents
 - [Installation](#installation)
-- [Getting Started]()
+- [Getting Started](#getting-started)
+- [Structured Output](#structured-output)
 
 
 
@@ -145,3 +146,60 @@ def check(text: str):
 ```
 
 ### Structured Output
+The class `ProfanityClassifierBot` in [chatbot.py](src/chatbot.py) is an example implementation
+of how to use an LLM as a guardrail. To make this approach reliable will use a feature called [**structured output**](https://platform.openai.com/docs/guides/structured-outputs).
+Essentially, we are enforcing the LLM to return its answer in a given format, namely a Json structure.
+To make the definitions of such a structure easy we also use `pydantic`'s `BaseModel` class to define our own
+class. Two classes are already implemented in [schema.py](src/schema.py):
+```python
+from pydantic import BaseModel
+
+class GuardRailResponse(BaseModel):
+    triggered: bool
+    new_text: str
+    exclude: bool
+
+class BinaryClassificationResponse(BaseModel):
+    result: bool
+    reason: str
+```
+Let's look at `BinaryClassificationResponse`. What this represents is a dictionary with two fields, one that has
+a boolean and one that has a string as their respective values. An example:
+```python
+{
+    "result": False, 
+    "reason": "This sentence does not contain any profanity"
+}
+```
+With this we can always expect this dictionary format from the `ProfanityClassifierBot` class.
+The relevant pieces of code in [chatbot.py](src/chatbot.py):
+```python
+class ProfanityClassifierBot:
+    # ...
+
+    def classify(self, user_text: str) -> BaseModel:
+        # ...
+        response = self.client.beta.chat.completions.parse(
+            model=self.model_name,
+            messages=[
+                {"role": "system", "content": prompt}
+            ],
+            response_format=BinaryClassificationResponse, # The desired Format used here
+            temperature=0.0
+        )
+        # ...
+```
+The `BinaryClassificationResponse` already covers a wide range of applications (mainly validations).
+If you implemented a custom format and you want o use it then you have to modify the relevant line:
+```python
+    # ...
+    response_format=BinaryClassificationResponse, # Replace this with your custom schema
+    # ...
+```
+
+Lastly, it is also good to mention in the prompt that you send to the LLM what format you expect.
+The function `format_profanity_classification_template` in [templates.py](src/templates.py) gives you an example.
+Feel free to reuse it.
+
+A note on implementations. If you plan on implementing your own formats (schemas) and prompts, you can place these
+in [schema.py](src/schema.py) and [templates.py](src/templates.py), respectively. This keeps your code tidy :).

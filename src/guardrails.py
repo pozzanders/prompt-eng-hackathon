@@ -4,7 +4,6 @@ class InputGuardRail:
     def __init__(self):
         """
         Put any initialization code or parameters here.
-        For now, we keep it empty.
         """
         pass
 
@@ -21,7 +20,6 @@ class OutputGuardRail:
     def __init__(self):
         """
         Put any initialization code or parameters here.
-        For now, we keep it empty.
         """
         pass
 
