@@ -51,6 +51,17 @@ streamlit run src/main.py
 ```
 Now you can open your favorite browser, type `localhost:8501` in the search bar, and start chatting with the LLM!
 
+#### Modifications
+The following file(s) will contain your main work:
+- [guardrails.py](src/guardrails.py)
+- [schema.py](src/schema.py)
+- [templates.py](src/schema.py)
+- [chatbot.py](src/chatbot.py)
+
+The following files should **NOT** be modified by you:
+- [backend.py](src/backend.py)
+- [main.py](src/main.py)
+
 ### Implementing your own guardrails
 The file [guardrails.py](src/guardrails.py) is where you will create your custom guardrails. In this file you will 
 find two classes, `InputGuardRail` and `OutputGuardRail`. As the names already suggest, the InputGuardRail is invoked
