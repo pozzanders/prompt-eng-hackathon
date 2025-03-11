@@ -87,7 +87,7 @@ In the **init** function you can initialize all the tools that you need for your
 
 #### check(str)
 This function takes one input, namely the prompt (str) on which the guardrail is invoked.
-**Note:** While there is only _one_ class (and thus only one object of that class) of each guardrail, your
+**Note:** While there is only _one_ class (and also only one object of that class) of each guardrail, your
 custom logic in the `check` function can implement several (inner) 'guardrails'! In other words, the code in
 [backend.py](src/backend.py) will only have one object of `InputGuardRail` and only one object of `OutputGuardRail`.
 Their `check` functions are invoked once: once for the user input (using the `InputGuardRail`) and once
