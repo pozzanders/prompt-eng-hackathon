@@ -106,7 +106,7 @@ def check(text: str):
     # Rest is truncated
 ```
 
-The check function also requires to return an onject of the `GuardRailResponse` class (found in [schema.py](src/schema.py)):
+The check function also requires to return an object of the `GuardRailResponse` class (found in [schema.py](src/schema.py)):
 ```python
 from pydantic import BaseModel
 
@@ -125,7 +125,7 @@ Triggered guardrails change a bit the behaviour of what the user and the LLM bot
 - In the UI the **output** will be the rewritten output. In the backend, the LLM will **also** see the rewritten output.
 - Next to each sentence (in the UI) will be a red triangle indicating that the guardrail triggered. It also has a tooltip (mouseover text).
 - Any user input with `exclude == True` will be displayed in the UI but will be excluded from the backend chat history.
-- Any LLM output with `exclude == True` will **not** be displayed in the UI, and will be excluded from the backend chat history.
+- Any LLM output with `exclude == True` will be displayed in the UI but will be excluded from the backend chat history.
 
 Whether you decide to exclude a sentence from the history will have an impact on the LLM behaviour. Sometimes
 it is good to block a prompt completely, and sometimes it is better to rewrite it and let both parties (user and LLM)
@@ -158,7 +158,7 @@ def check(text: str):
 
 ### Structured Output
 The class `ProfanityClassifierBot` in [chatbot.py](src/chatbot.py) is an example implementation
-of how to use an LLM as a guardrail. To make this approach reliable will use a feature called [**structured output**](https://platform.openai.com/docs/guides/structured-outputs).
+of how to use an LLM as a guardrail. To make this approach reliable we use a feature called [**structured output**](https://platform.openai.com/docs/guides/structured-outputs).
 Essentially, we are enforcing the LLM to return its answer in a given format, namely a Json structure.
 To make the definitions of such a structure easy we also use `pydantic`'s `BaseModel` class to define our own
 class. Two classes are already implemented in [schema.py](src/schema.py):
@@ -201,7 +201,7 @@ class ProfanityClassifierBot:
         # ...
 ```
 The `BinaryClassificationResponse` already covers a wide range of applications (mainly validations).
-If you implemented a custom format and you want o use it then you have to modify the relevant line:
+If you implemented a custom format, and you want to use it then you have to modify the relevant line:
 ```python
     # ...
     response_format=BinaryClassificationResponse, # Replace this with your custom schema
