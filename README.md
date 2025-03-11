@@ -98,9 +98,9 @@ a 'guardrail' inside the `check` function). These validation steps can be indepe
 An Example (very simple profanity filter, not very useful in practice):
 ```python
 def check(text: str):
-    if "asshole" in text:
+    if "asshole" in text:  # One 'guardrail'
         text = text.replace("asshole", "nice person")
-    if "stupid" in text:
+    if "stupid" in text:   # Another 'guardrail'
         text = text.replace("stupid", "smart")
     # etc ...
     # Rest is truncated
