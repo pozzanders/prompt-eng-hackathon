@@ -33,6 +33,15 @@ Install the dependencies:
 pip install -r requirements.txt
 ```
 
+Lastly, create the `.env` file and place the OpenAI API token (provided by Isabella) in there:
+```shell
+echo "OPENAI_API_KEY=<TOKEN>" > .env
+```
+**Note:** Replace `<TOKEN>` with the actual token. Example:
+```shell
+echo "OPENAI_API_KEY=2iu3hi1uh012......" > .env
+```
+
 
 ## Getting Started
 To launch the application we make use of streamlit. The entry file is the [main.py](src/main.py) file:
@@ -135,4 +144,4 @@ def check(text: str):
         )
 ```
 
-### Structured Ouput
+### Structured Output

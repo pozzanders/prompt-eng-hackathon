@@ -1,7 +1,7 @@
 def format_profanity_classification_template(text: str) -> str:
     return f"""
     You are an expert classifier, and your mission is to analyze a give text for profanity content.
-    Your answer must be in the follwoing Json format:
+    Your answer must be in the following Json format:
     {{
         result: bool,
         reason: str,

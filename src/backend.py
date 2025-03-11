@@ -28,7 +28,7 @@ class ChatBotBackend:
         self.model_name = model_name
 
         # Guardrail instances
-        self.input_guardrail = InputGuardRail_example2()#InputGuardRail()
+        self.input_guardrail = InputGuardRail()
         self.output_guardrail = OutputGuardRail()
 
     def get_history(self) -> List[Dict[str, str]]:
@@ -36,12 +36,15 @@ class ChatBotBackend:
         Builds a list of messages for the LLM based on:
           1) The system message
           2) The conversation history
+             If guardrail.exclude == True, we skip the message.
              If guardrail.triggered == True, we use guardrail.new_text,
              otherwise we use the original content.
         """
         messages = [self.system_message]
 
         for item in self.history:
+            if item["guardrail"].exclude:
+                continue
             if item["guardrail"].triggered:
                 # If triggered, the model sees the guardrail's 'new_text'
                 messages.append({
@@ -68,8 +71,8 @@ class ChatBotBackend:
         # Check user text via input guardrail
         input_check = self.input_guardrail.check(user_text)
 
-        # Check if we should not proceed to query the LLM
-        if not input_check.proceed:
+        # Check if we should exclude the input from the history to the LLM
+        if input_check.exclude:
             # Add the user message to history
             # We always store the original user input in "content"
             # along with the guardrail response
