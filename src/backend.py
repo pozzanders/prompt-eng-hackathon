@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 from schema import GuardRailResponse
 from guardrails import InputGuardRail, OutputGuardRail
 from example_guardrails import *
+from parameters import TEMPERATURE, SYSTEM_MESSAGE
 
 load_dotenv()  # Loads environment variables from a .env file if present
 openai.api_key = os.getenv("OPENAI_API_KEY", "")
@@ -15,7 +16,7 @@ class ChatBotBackend:
         # System message can be used as an initial instruction for the model
         self.system_message = {
             "role": "system",
-            "content": "You are a helpful assistant."
+            "content": SYSTEM_MESSAGE
         }
 
         # This list will store the conversation:
@@ -94,7 +95,7 @@ class ChatBotBackend:
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
-            temperature=0.7 # TODO
+            temperature=TEMPERATURE
         )
 
         # Extract the model's output text
