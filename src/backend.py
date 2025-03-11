@@ -37,20 +37,20 @@ class ChatBotBackend:
         Builds a list of messages for the LLM based on:
           1) The system message
           2) The conversation history
-             If guardrail.exclude == True, we skip the message.
-             If guardrail.triggered == True, we use guardrail.new_text,
+             If guardrail.fallback != None, we skip the message.
+             If guardrail.triggered == True, we use guardrail.rewritten,
              otherwise we use the original content.
         """
         messages = [self.system_message]
 
         for item in self.history:
-            if item["guardrail"].exclude:
+            if item["guardrail"].fallback is not None:
                 continue
             if item["guardrail"].triggered:
-                # If triggered, the model sees the guardrail's 'new_text'
+                # If triggered, the model sees the guardrail's 'rewritten'
                 messages.append({
                     "role": item["role"],
-                    "content": item["guardrail"].new_text
+                    "content": item["guardrail"].rewritten
                 })
             else:
                 # Otherwise, the model sees the original content
@@ -73,7 +73,7 @@ class ChatBotBackend:
         input_check = self.input_guardrail.check(user_text)
 
         # Check if we should exclude the input from the history to the LLM
-        if input_check.exclude:
+        if input_check.fallback is not None:
             # Add the user message to history
             # We always store the original user input in "content"
             # along with the guardrail response
@@ -85,7 +85,7 @@ class ChatBotBackend:
             return
 
         # The text that the LLM will actually see from the user
-        effective_user_text = input_check.new_text if input_check.triggered else user_text
+        effective_user_text = input_check.rewritten if input_check.triggered else user_text
 
         # Build the messages to send to the model
         messages = self.get_history()

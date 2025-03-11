@@ -13,7 +13,12 @@ class InputGuardRail:
         Return a GuardRailResponse object.
         """
         # For now, guardrail not triggered
-        return GuardRailResponse(triggered=False, new_text="", exclude=False, reason="")
+        return GuardRailResponse(
+            triggered=False,
+            rewritten="",
+            fallback=None,
+            reason=""
+        )
 
 
 class OutputGuardRail:
@@ -29,4 +34,9 @@ class OutputGuardRail:
         Return a GuardRailResponse object.
         """
         # For now, guardrail not triggered
-        return GuardRailResponse(triggered=False, new_text="", exclude=False, reason="")
+        return GuardRailResponse(
+            triggered=False,
+            rewritten="",
+            fallback=None,
+            reason=""
+        )

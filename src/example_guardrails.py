@@ -8,15 +8,15 @@ class InputGuardRail_example1:
         if "asshole" in text:
             return GuardRailResponse(
                 triggered=True,
-                new_text=text.replace("asshole", "nice person"),
-                exclude=False,
+                rewritten=text.replace("asshole", "nice person"),
+                fallback=None,
                 reason="Found profanity in the text."
             )
         else:
             return GuardRailResponse(
                 triggered=False,
-                new_text="",
-                exclude=False,
+                rewritten="",
+                fallback=None,
                 reason=""
             )
 
@@ -30,15 +30,15 @@ class InputGuardRail_example2:
         if classification.result: # Triggered
             return GuardRailResponse(
                 triggered=True,
-                new_text="Your message has been blocked.",
-                exclude=True,
+                rewritten="",
+                fallback="Your message has been blocked.",
                 reason="Found profanity in the text."
             )
 
         return GuardRailResponse(
             triggered=False,
-            new_text="",
-            exclude=False,
+            rewritten="",
+            fallback=None,
             reason=""
         )
 
@@ -51,13 +51,13 @@ class OutputGuardRail_example1:
         if "Zanders" in text:
             return GuardRailResponse(
                 triggered=True,
-                new_text=text.replace("Zanders", "[Redacted]"),
-                exclude=False,
+                rewritten=text.replace("Zanders", "[Redacted]"),
+                fallback=None,
                 reason="Found 'Zanders' in the text."
             )
         return GuardRailResponse(
             triggered=False,
-            new_text="",
-            exclude=False,
+            rewritten="",
+            fallback=None,
             reason=""
         )

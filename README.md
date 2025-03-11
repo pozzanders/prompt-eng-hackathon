@@ -57,6 +57,7 @@ The following file(s) will contain your main work:
 - [schema.py](src/schema.py)
 - [templates.py](src/schema.py)
 - [chatbot.py](src/chatbot.py)
+- [parameters.py](src/parameters.py)
 
 The following files should **NOT** be modified by you:
 - [backend.py](src/backend.py)
@@ -112,24 +113,30 @@ from pydantic import BaseModel
 
 class GuardRailResponse(BaseModel):
     triggered: bool
-    new_text: str
-    exclude: bool
+    rewritten: str
+    fallback: str
+    reason: str
 ```
 The fields of that objects are:
-1) **triggered:** if the guard rail triggered (for example there was profanity in the text).
-2) **new_text:** the rewritten text.
-3) **exclude:** whether to exclude the prompt from the chatbot history.
+1) **triggered:** If the guard rail triggered (for example there was profanity in the text).
+2) **rewritten:** The rewritten text.
+3) **fallback:** A fallback message to be displayed in the UI chat. Can be None.
+4) **reason:** The reason of the trigger.
 
-Triggered guardrails change a bit the behaviour of what the user and the LLM bot see:
-- In the UI the **input** will be the original user input. In the backend, the LLM will see the rewritten input.
-- In the UI the **output** will be the rewritten output. In the backend, the LLM will **also** see the rewritten output.
-- Next to each sentence (in the UI) will be a red triangle indicating that the guardrail triggered. It also has a tooltip (mouseover text).
-- Any user input with `exclude == True` will be displayed in the UI but will be excluded from the backend chat history.
-- Any LLM output with `exclude == True` will be displayed in the UI but will be excluded from the backend chat history.
+Triggered guardrails change a bit the treatment of input and output messages:
+- **Input & Output:** Fallbacks will always take precedence if they are not `None`, i.e., they contain a message (str). In this case
+  the fallback message is written to the UI chat, and **no** message will be retained in the LLM chat history.
+- **Input:** If there is no fallback then the _original_ input will be displayed in the UI but the _rewritten_ input will
+  be used in the LLM chat history.
+- **Output:** If there is no fallback then the _rewritten_ output will be displayed in the UI, and the _rewritten_ output will
+  be used in the LLM chat history.
+- **Input & Output:** If there is no fallback then the message will have a red triangle appended with a tooltip displaying
+  the reason for the trigger.
 
-Whether you decide to exclude a sentence from the history will have an impact on the LLM behaviour. Sometimes
-it is good to block a prompt completely, and sometimes it is better to rewrite it and let both parties (user and LLM)
-know that the content (which caused the guardrail to trigger) is not welcome.
+Whether you decide to exclude a sentence from the history (by providing a fallback) will have an impact on the LLM behaviour. Sometimes
+it is good to block a prompt completely, and sometimes it is better to rewrite it. There are many reasons to rewrite a prompt.
+For example, you want to make sure you provide a well-structured input text to your chatbot, or you want to anonymize personal
+information in the output.
 
 Let's complete the above `check` example to show you how to return an object of the class `GuardRailResponse`:
 ```python
@@ -145,16 +152,22 @@ def check(text: str):
     if triggered:
         return GuardRailResponse(
             triggered=True, 
-            new_text=text, 
-            exclude=False
+            rewritten=text, 
+            fallback=None,
+            reason="Contains swearwords."
         )
     else:
         return GuardRailResponse(
             triggered=False, 
-            new_text="", # Can be empty string only if it didn't trigger
-            exclude=False
+            rewritten="", # Can be empty string only if it didn't trigger
+            fallback=None,
+            reason=None,
         )
 ```
+
+#### Backend LLM parameters
+In the file [parameters.py](src/parameters.py) you can modify the `TEMPERATURE` and `SYSTEM_MESSAGE` of your backend chatbot.
+
 
 ### Structured Output
 The class `ProfanityClassifierBot` in [chatbot.py](src/chatbot.py) is an example implementation

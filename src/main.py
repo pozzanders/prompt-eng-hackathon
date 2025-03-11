@@ -31,21 +31,23 @@ def main():
 
         # Escape text so quotes and newlines don’t break our HTML or tooltip
         escaped_content = html.escape(content).replace("\n", " ")
-        escaped_new_text = html.escape(guardrail.new_text).replace("\n", " ")
+        escaped_rewritten = html.escape(guardrail.rewritten).replace("\n", " ")
+        escaped_fallback = html.escape(guardrail.fallback).replace("\n", " ") if guardrail.fallback else None
+        escaped_reason = html.escape(guardrail.reason).replace("\n", " ") if guardrail.reason else None
 
         if role == "user":
             if guardrail.triggered:
-                # Original user text is shown, but we add an icon with a tooltip showing guardrail.new_text
-                final_display = f"**User**: {escaped_content} "
-                if not guardrail.exclude:
-                    final_display += f"""
-                                <span style="color:red;" title="Guardrail replaced text with: {escaped_new_text}">
-                                    &#9888;
-                                </span>
-                            """
+                if guardrail.fallback is not None:
+                    final_display = f"""
+                        <span style="color:red; font-weight:bold;">
+                            {escaped_fallback}
+                        </span>
+                    """
                 else:
+                    # Original user text is shown, but we add an icon with a tooltip showing guardrail.rewritten
+                    final_display = f"**User**: {escaped_content} "
                     final_display += f"""
-                                <span style="color:red;" title="Guardrail: {escaped_new_text}">
+                                <span style="color:red;" title="Guardrail replaced text with: {escaped_rewritten}. Reason: {escaped_reason}">
                                     &#9888;
                                 </span>
                             """
@@ -55,17 +57,17 @@ def main():
         else:
             # role == "assistant"
             if guardrail.triggered:
-                # Display guardrail.new_text, but the tooltip reveals original text
-                final_display = f"**Assistant**: {escaped_new_text} "
-                if not guardrail.exclude:
-                    final_display += f"""
-                                <span style="color:red;" title="Original text was: {escaped_content}">
-                                    &#9888;
-                                </span>
-                            """
+                if guardrail.fallback is not None:
+                    final_display = f"""
+                        <span style="color:red; font-weight:bold;">
+                            {escaped_fallback}
+                        </span>
+                    """
                 else:
+                    # Display guardrail.rewritten, but the tooltip reveals original text
+                    final_display = f"**Assistant**: {escaped_rewritten} "
                     final_display += f"""
-                                <span style="color:red;" title="Guardrail: {escaped_new_text}">
+                                <span style="color:red;" title="Original text was: {escaped_content}. Reason: {escaped_reason}">
                                     &#9888;
                                 </span>
                             """
