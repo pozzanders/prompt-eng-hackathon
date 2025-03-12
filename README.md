@@ -8,14 +8,20 @@
 
 
 ## Installation
-Clone the repository and create the `venv`:
+Clone the repository and create the `.venv`:
 ```shell
 git clone https://github.com/pozzanders/prompt-eng-hackathon.git
 cd prompt-eng-hackathon
-python -m venv venv
+python -m venv .venv
 ```
 
-Activate the virtual environment:
+### 1. Activate the virtual environment
+
+NOTE: if you get an error when trying to activate the virtual environment, try first to run the following command in Powershell:
+```
+Set-ExecutionPolicy -Scope "CurrentUser" -ExecutionPolicy "Unrestricted" 
+```
+
 #### Linux
 ```shell
 source venv/bin/activate
@@ -29,19 +35,14 @@ venv\Scripts\activate
 .\venv\Scripts\Activate.ps1
 ```
 
-Install the dependencies:
+### 2. Install the dependencies
+We have prepared some basica packages to run the code, which you can install by running in a terminal the following:
 ```shell
 pip install -r requirements.txt
 ```
 
-Lastly, create the `.env` file and place the OpenAI API token (provided by Isabella) in there:
-```shell
-echo "OPENAI_API_KEY=<TOKEN>" > .env
-```
-**Note:** Replace `<TOKEN>` with the actual token. Example:
-```shell
-echo "OPENAI_API_KEY=2iu3hi1uh012......" > .env
-```
+Lastly, create a file `.env` as a copy of the template `env-temp`
+and substitute `<TOKEN>` with the OpenAI API key _(provided by Isabella via Keeper)_.
 
 
 ## Getting Started
