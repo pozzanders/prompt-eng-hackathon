@@ -28,7 +28,7 @@ source venv/bin/activate
 ```
 #### Windows (cmd)
 ```shell
-venv\Scripts\activate
+.venv\Scripts\activate
 ```
 #### Windows (PowerShell)
 ```shell
