@@ -31,13 +31,12 @@ jsonschema-specifications==2024.10.1
 MarkupSafe==3.0.2
 mypy_extensions==1.0.0
 narwhals==1.29.1
-numpy==1.26.4
+numpy>=1.26.4
 openai==1.65.5
 packaging==24.2
 pandas==2.2.3
 pathspec==0.12.1
 pillow==11.1.0
-pip==25.0.1
 pkgutil_resolve_name==1.3.10
 platformdirs==4.3.6
 protobuf==5.28.3
