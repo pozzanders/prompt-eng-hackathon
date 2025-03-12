@@ -107,28 +107,31 @@ def check(text: str):
     # Rest is truncated
 ```
 
-The check function also requires to return an object of the `GuardRailResponse` class (found in [schema.py](src/schema.py)):
+The check function also has to return an object of the `GuardRailResponse` class (found in [schema.py](src/schema.py)):
 ```python
 from pydantic import BaseModel
 
 class GuardRailResponse(BaseModel):
     triggered: bool
     rewritten: str
-    fallback: str
+    fallback: Optional[str] # Optional means it can be either a string or None.
     reason: str
 ```
-The fields of that objects are:
+The fields of that class are:
 1) **triggered:** If the guard rail triggered (for example there was profanity in the text).
-2) **rewritten:** The rewritten text.
-3) **fallback:** A fallback message to be displayed in the UI chat. Can be None.
-4) **reason:** The reason of the trigger.
+2) **rewritten:** The rewritten text. Often, rewriting is not necessary. In that case use empty string (`""`).
+3) **fallback:** A fallback message to be displayed in the UI chat. Can be `None`.
+4) **reason:** The reason of the trigger. If not triggered then empty string should be given.
 
 Triggered guardrails change a bit the treatment of input and output messages:
 - **Input & Output:** Fallbacks will always take precedence if they are not `None`, i.e., they contain a message (str). In this case
   the fallback message is written to the UI chat, and **no** message will be retained in the LLM chat history.
-- **Input:** If there is no fallback then the _original_ input will be displayed in the UI but the _rewritten_ input will
+  **Note:** We make a distinction here between '_UI chat_' and '_LLM chat history_'. The LLM chat history
+  contains all messages that are always sent to the LLM chatbot (in the [backend.py](src/backend.py)) each time
+  the LLM chatbot is queried. The UI chat contains all messages, visualized in the browser.
+- **Input:** If there is no fallback then the _original_ input will be displayed in the UI chat but the _rewritten_ input will
   be used in the LLM chat history.
-- **Output:** If there is no fallback then the _rewritten_ output will be displayed in the UI, and the _rewritten_ output will
+- **Output:** If there is no fallback then the _rewritten_ output will be displayed in the UI chat, and the _rewritten_ output will
   be used in the LLM chat history.
 - **Input & Output:** If there is no fallback then the message will have a red triangle appended with a tooltip displaying
   the reason for the trigger.
@@ -161,27 +164,35 @@ def check(text: str):
             triggered=False, 
             rewritten="", # Can be empty string only if it didn't trigger
             fallback=None,
-            reason=None,
+            reason="",
         )
 ```
 
 #### Backend LLM parameters
 In the file [parameters.py](src/parameters.py) you can modify the `TEMPERATURE` and `SYSTEM_MESSAGE` of your backend chatbot.
+- **TEMPERATURE**: Determines the 'creativity' of your LLM chatbot. Acceptable values are 0.0 to 2.0.
+  0.0 means **no** creativity.
+- **SYSTEM_MESSAGE**: This is a special type of message that lets you define the behaviour of
+  your LLM chatbot. For example, it can contain a set of rules that the LLM chatbot must follow.
 
 
 ### Structured Output
 The class `ProfanityClassifierBot` in [chatbot.py](src/chatbot.py) is an example implementation
-of how to use an LLM as a guardrail. To make this approach reliable we use a feature called [**structured output**](https://platform.openai.com/docs/guides/structured-outputs).
-Essentially, we are enforcing the LLM to return its answer in a given format, namely a Json structure.
+of how to use an LLM as a guardrail. Note that this chatbot (`ProfanityClassifierBot`) is a different bot than the 'LLM chatbot'
+mentioned in the previous sections, although they might use the same GPT model in the API.
+To make this approach reliable we use a feature called [**structured output**](https://platform.openai.com/docs/guides/structured-outputs).
+Essentially, we are enforcing the `ProfanityClassifierBot` to return its answer in a given format, namely a Json structure.
 To make the definitions of such a structure easy we also use `pydantic`'s `BaseModel` class to define our own
 class. Two classes are already implemented in [schema.py](src/schema.py):
 ```python
+from typing import Optional
 from pydantic import BaseModel
 
 class GuardRailResponse(BaseModel):
     triggered: bool
-    new_text: str
-    exclude: bool
+    rewritten: str
+    fallback: Optional[str]
+    reason: str
 
 class BinaryClassificationResponse(BaseModel):
     result: bool
@@ -221,7 +232,7 @@ If you implemented a custom format, and you want to use it then you have to modi
     # ...
 ```
 
-Lastly, it is also good to mention in the prompt that you send to the LLM what format you expect.
+Lastly, it is also good to mention in the prompt that you send to the `ProfanityClassifierBot` what format you expect.
 The function `format_profanity_classification_template` in [templates.py](src/templates.py) gives you an example.
 Feel free to reuse it.
 
