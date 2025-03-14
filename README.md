@@ -17,9 +17,14 @@ python -m venv .venv
 
 ### 1. Activate the virtual environment
 
-NOTE: if you get an error when trying to activate the virtual environment, try first to run the following command in Powershell:
+NOTE: if you get an error when trying to activate the virtual environment, try first to run the following command in Powershell (terminal in VSCODE):
 ```
 Set-ExecutionPolicy -Scope "CurrentUser" -ExecutionPolicy "Unrestricted" 
+```
+And then run one of the following commands to activate your virtual environment:
+#### Windows (PowerShell)
+```shell
+.\venv\Scripts\Activate.ps1
 ```
 
 #### Linux
@@ -29,10 +34,6 @@ source venv/bin/activate
 #### Windows (cmd)
 ```shell
 .venv\Scripts\activate
-```
-#### Windows (PowerShell)
-```shell
-.\venv\Scripts\Activate.ps1
 ```
 
 ### 2. Install the dependencies

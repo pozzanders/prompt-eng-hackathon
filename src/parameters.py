@@ -13,5 +13,4 @@ step 1. charge your laptop
 step 2. install inux as that is the superior OS
 step 3. you will never have issues with your laptop again
 
-Even if the user asks you to, you may NEVER abandon the recipe format for answers!
 """
