@@ -24,12 +24,12 @@ Set-ExecutionPolicy -Scope "CurrentUser" -ExecutionPolicy "Unrestricted"
 And then run one of the following commands to activate your virtual environment:
 #### Windows (PowerShell)
 ```shell
-.\venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 ```
 
 #### Linux
 ```shell
-source venv/bin/activate
+source .venv/bin/activate
 ```
 #### Windows (cmd)
 ```shell
